@@ -1,0 +1,34 @@
+{
+  "env": "Factory",
+  "id": "1",
+  "name": "3d printer factory",
+  "components": [
+    {
+      "name": "Printer 1",
+      "type": "3d printer",
+      "id": "ADFEW23",
+      "position": "1",
+      "parameters": [
+        {
+          "name": "Nozzle",
+          "dataType": "Temperatur",
+          "nameModel": "nozzle",
+          "position":"21,23"
+        }
+      ]
+    },
+    {
+      "name": "Printer 2",
+      "type": "3d printer",
+      "id": "ADF23",
+      "position": "2",
+      "sites": [
+        {
+          "name": "Nozzle",
+          "dataType": "Temperatur",
+          "nameModel": "nozzle"
+        }
+      ]
+    }
+  ]
+}
