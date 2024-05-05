@@ -55,12 +55,13 @@ export default function Pipe({ data }:any) {
       // var positionAbsolute = { x: -93, y: -65, z: -27.200000000000003 }
       console.log("position absolutes",positionAbsolute)
       changeNozzlePositionAbsolute(positionAbsolute.x, positionAbsolute.z);
-      changeRodPositionAbsolute(positionAbsolute.z);
-      changeBasePositionAbsolute(positionAbsolute.y);
+      // changeNozzlePositionAbsolute(10,200);
+      changeRodPositionAbsolute(50);
+      // changeBasePositionAbsolute(positionAbsolute.y);
 
     }
   }, [data]);
-  // changeRodPositionAbsolute(50);
+
   useEffect(() => {
     if (canvas.current) {
       const engine = new Engine(canvas.current, true);
@@ -262,27 +263,27 @@ export default function Pipe({ data }:any) {
   function changeNozzlePositionAbsolute(x: number, z: number) {
     if (noz0.current && noz1.current && noz2.current && noz3.current && noz4.current) {
      
-      noz0.current.position.z = x;
+      noz0.current.position.x = x;
       noz0.current.position.y = z;
 
 
      
-      noz1.current.position.z = x;
+      noz1.current.position.x = x;
       noz1.current.position.y = z;
 
 
       
-      noz2.current.position.z = x;
+      noz2.current.position.x = x;
       noz2.current.position.y = z;
 
 
       
-      noz3.current.position.z = x;
+      noz3.current.position.x = x;
       noz3.current.position.y = z;
 
 
       
-      noz4.current.position.z = x;
+      noz4.current.position.x = x;
       noz4.current.position.y = z;
 
       
@@ -322,25 +323,25 @@ export default function Pipe({ data }:any) {
 
   function changeBasePositionAbsolute(y: number) {
     if (base0.current && base1.current && base2.current && base3.current && base4.current && base5.current) {
-      base0.current.position.x = y;
+      base0.current.position.y = y;
      
 
 
-      base1.current.position.x = y;
+      base1.current.position.y = y;
      
 
 
-      base2.current.position.x = y;
+      base2.current.position.y = y;
       
 
 
-      base3.current.position.x = y;
+      base3.current.position.y = y;
       
 
 
-      base4.current.position.x = y;
+      base4.current.position.y = y;
       
-      base5.current.position.x = y;
+      base5.current.position.y = y;
      
       console.log(base0.current.position, base1.current.position, base2.current.position, base3.current.position, base4.current.position,base5.current.position)
     }
@@ -348,9 +349,9 @@ export default function Pipe({ data }:any) {
 
 
   function transformCoordinates(x: number, y: number, z: number) {
-    const minX = -93, maxX = 120;
-    const minY = 130, maxY = -90;
-    const minZ = -60, maxZ = 165;
+    const minX = -93, maxX = 165;
+    const minY = -65, maxY = 200;
+    const minZ = -100, maxZ = 100;
 
 
     const minX1 = 0, maxX1 = 220;

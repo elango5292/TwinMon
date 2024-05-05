@@ -8,8 +8,8 @@ import { PiCloudCheckFill } from "react-icons/pi";
 
 
 
-export default function DetailsCard(props) {
-    console.log("here", props.data)
+export default function DetailsCard(props:any) {
+    // console.log("here", props.data)
 
     return (
         <div className="flex text-stone-900 px-7  flex-col w-full ">

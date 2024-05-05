@@ -1,7 +1,5 @@
 "use client"
 
-import data from "@/public/Tconfig.json"
-import MachineCard from "@/components/MachineCard"
 import LineCard from "@/components/LineCard"
 import DetailsCard
  from "@/components/DetailsCard"
@@ -11,7 +9,7 @@ import DetailsCard
  import axios from "axios"
  import { useState,useEffect, use } from "react"
  import Twin from "@/components/Twin"
-import { ResponsiveLine } from "@nivo/line"
+import Anamolycard from "@/components/Anamolycard"
 
 export default function Dashboard() {
 
@@ -33,7 +31,7 @@ export default function Dashboard() {
     
         axios.get("/api/printer?t=1").then((response) => {
           setData(response.data[0]);
-          console.log("1",response.data[0]);
+          // console.log("1",response.data[0]);
    
         });
         axios.get("/api/printer?t=10").then((response) => {
@@ -82,7 +80,11 @@ export default function Dashboard() {
 
 <DetailsCard devicedata={deviceData} data={data}/>   
 
+
 </div>    
+<div className="mx-auto">
+<Anamolycard data={data}/>
+</div>
         </div>
         <div className="h-auto w-auto bg-white">
        

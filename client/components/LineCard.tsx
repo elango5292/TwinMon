@@ -28,7 +28,7 @@ export default function LineCard(machines:any) {
             {isOpen && (
                 <div className=" p-4  gap-x-2  bg-neutral-50 border border-zinc-300 border-opacity-60">
                    
-                {machines.machines.map((machine) => (
+                {machines.machines.map((machine:any) => (
                     <MachineCard key={machine.name} name={machine.name} status={machine.status} />
                 ))}
                    </div>

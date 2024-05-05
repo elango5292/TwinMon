@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from "@/prisma/client";
+import * as constants from '@/app/api/constants.js';
+import axios from 'axios';
 
-// import server_url from '@/api/constants.js';
 
 export async function POST(request) {
   const { nozzleTemp, bedTemp, xPos, yPos, zPos,fanSpeed,printerSpeed } = await request.json();
@@ -64,14 +65,42 @@ export async function GET(request) {
   const { searchParams } = request.nextUrl;
   const limit = searchParams.get('t') ? parseInt(searchParams.get('t'), 10) : 10;
 
-  const sensorData = await prisma.printerData.findMany({
+  let sensorData = await prisma.printerData.findMany({
     take: limit,
     orderBy: {
       createdAt: 'desc',
     },
   });
 
-  console.log()
-console.log(sensorData)
+  if (limit === 1) {
+    console.log("entered 1");
+    let predata = JSON.stringify({"data":[[sensorData[0].nozzleTemp,sensorData[0].bedTemp,sensorData[0].fanSpeed,sensorData[0].printerSpeed]]});
+    console.log(predata);
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: constants.server_url+"/predict",
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : predata
+    };
+
+    try {
+      const response = await axios.request(config);
+      console.log(JSON.stringify(response.data.prediction));
+      sensorData[0].prediction = response.data.prediction[0];
+      console.log(sensorData);
+      return NextResponse.json(sensorData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  console.log(sensorData);
   return NextResponse.json(sensorData);
 }
+
+
+
