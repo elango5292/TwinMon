@@ -1,10 +1,13 @@
 "use client"
-import { Engine, Scene, Vector3, FreeCamera, HemisphericLight, StandardMaterial, Texture, ExecuteCodeAction, ActionManager, Color3, Mesh } from "@babylonjs/core";
+import { Engine, Scene, Vector3, FreeCamera, HemisphericLight, StandardMaterial, Texture, ExecuteCodeAction, ActionManager, Color4,Color3, Mesh, Layer } from "@babylonjs/core";
 import { useEffect, useRef, useState } from "react";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 import "@babylonjs/loaders/glTF";
-
+// import { ArcRotateCamera, GUI3DManager, CylinderPanel, VRExperienceHelper, 
+//   Plane, AdvancedDynamicTexture, Rectangle, StackPanel, InputText, TextBlock, Box, Button, EnvironmentHelper, VirtualKeyboard } from 'react-babylonjs'
+import { AdvancedDynamicTexture,StackPanel,Rectangle,TextBlock,LinearGradient } from '@babylonjs/gui/2D';
 export default function Pipe({ data }:any) {
+
   const [colo1, setColo1] = useState(Color3.Red());
   const [colo2, setColo2] = useState(Color3.Green());
   const [colo3, setColo3] = useState(Color3.FromHexString("#0060c7"));
@@ -12,6 +15,9 @@ export default function Pipe({ data }:any) {
   const material1 = useRef<StandardMaterial | null>(null);
   const material2 = useRef<StandardMaterial | null>(null);
   const material3 = useRef<StandardMaterial | null>(null);
+
+  const mainScene = useRef<Scene|null>(null)
+
 
   const noz0 = useRef<Mesh | null>(null);
   const noz1 = useRef<Mesh | null>(null);
@@ -52,19 +58,22 @@ export default function Pipe({ data }:any) {
 
     if (noz0.current) {
       var positionAbsolute = transformCoordinates(data.xPos, data.yPos, data.zPos);
-      // var positionAbsolute = { x: -93, y: -65, z: -27.200000000000003 }
-      console.log("position absolutes",positionAbsolute)
       changeNozzlePositionAbsolute(positionAbsolute.x, positionAbsolute.z);
       changeRodPositionAbsolute(positionAbsolute.z);
       changeBasePositionAbsolute(positionAbsolute.y);
+      var url = process.env.PUBLIC_URL + "/bg.png";
+      var background = new Layer("back","https://picsum.photos/200/300.jpg", mainScene.current);
+    background.isBackground = true;
 
     }
+    
   }, [data]);
   // changeRodPositionAbsolute(50);
   useEffect(() => {
     if (canvas.current) {
       const engine = new Engine(canvas.current, true);
       const scene = new Scene(engine);
+      mainScene.current=scene
       const camera = new FreeCamera('camera1', new Vector3(-9.342750198299138, 9.35949206836682, -2.7322700114203506), scene);
       camera.attachControl(canvas.current, true);
       camera.speed = 1;
@@ -91,10 +100,35 @@ export default function Pipe({ data }:any) {
 
           if (m.name === "nozzle_primitive0"){
             console.log("Nozzle",noz0)
+            var advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("mainui",true,scene);
+            var panel = new StackPanel();  
+          panel.width = 0.25;
+          panel.rotation = 0.2;
+          advancedTexture.addControl(panel);
+          
+          
+          var label = new Rectangle("label for " + "myMesh1");
+          label.background = "black"
+          label.color = "white";
+          label.height = "30px";
+          label.alpha = 0.5;
+          label.width = "100px";
+          label.cornerRadius = 20;
+          label.thickness = 1;
+          label.linkOffsetY = -30;
+          advancedTexture.addControl(label);
+          label.linkWithMesh(m); 
+             var text1 = new TextBlock();
+        text1.text = "Temp:";
+        text1.color = "white";
+        text1.fontSize=12;
+        label.addControl(text1);  
+          
           }
           if (m.name === "nozzle_primitive0" || m.name === "nozzle_primitive1" || m.name === "nozzle_primitive2" || m.name === "nozzle_primitive3" || m.name === "nozzle_primitive4" || m.name === "nozzle_primitive5") {
             material1.current.diffuseColor = colo1;
             m.material = material1.current;
+            
           }
           if (m.name === "rod_primitive0" || m.name === "rod_primitive1" || m.name === "rod_primitive2" || m.name === "rod_primitive3" || m.name === "rod_primitive4" || m.name === "rod_primitive5") {
             material2.current.diffuseColor = colo2;
@@ -119,6 +153,8 @@ export default function Pipe({ data }:any) {
             case "base_primitive5": base5.current = m; break;
           }
 
+          
+
           if (m.name === "base_primitive0" || m.name === "base_primitive1" || m.name === "base_primitive2" || m.name === "base_primitive3" || m.name === "base_primitive4" || m.name === "base_primitive5") {
             material3.current.diffuseColor = colo3;
             m.material = material3.current;
@@ -127,12 +163,20 @@ export default function Pipe({ data }:any) {
       }, null, function (scene, message, exception) {
         console.error("Error loading model: ", message, exception);
       });
-
+      let myMesh11 = noz0.current
+      console.log("11",myMesh11)
       camera.position = new Vector3(248.93757667651093, 299.76323215468295, 12.079756604162622);
       camera.rotation = new Vector3(0.6731406779922281, 4.646166345275046, 0);
 
-      const myMesh1 = scene.getMeshByName("base_primitive0");
-      console.log(myMesh1)
+      const myMesh1 = scene.getMeshByName("nozzle_primitive0");
+      console.log("22",myMesh1)
+      
+
+    
+
+
+     
+
       
     
 
@@ -145,6 +189,7 @@ export default function Pipe({ data }:any) {
       });
     }
    
+   
   }, []);
 
   useEffect(() => {
@@ -154,6 +199,7 @@ export default function Pipe({ data }:any) {
       
     
   }, [colo3]);
+  
 
   useEffect(() => {
     if (material2.current) {

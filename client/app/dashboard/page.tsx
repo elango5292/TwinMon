@@ -41,18 +41,18 @@ export default function Dashboard() {
     
        
 
-        const interval = setInterval(() => {
-          axios.get("/api/printer?t=1").then((response) => {
-            setData(response.data[0]);
+        // const interval = setInterval(() => {
+        //   axios.get("/api/printer?t=1").then((response) => {
+        //     setData(response.data[0]);
       
-          });
-        axios.get("/api/printer?t=10").then((response) => {
-            setChData(response.data);
-            // console.log("10",response.data);
-          });
-        }, 1000);
+        //   });
+        // axios.get("/api/printer?t=10").then((response) => {
+        //     setChData(response.data);
+        //     // console.log("10",response.data);
+        //   });
+        // }, 1000);
     
-        return () => clearInterval(interval);
+        // return () => clearInterval(interval);
       }, []);
 
   
