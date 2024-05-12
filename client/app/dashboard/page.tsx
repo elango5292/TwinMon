@@ -83,14 +83,14 @@ export default function Dashboard() {
 
 </div>    
 <div className="mx-auto">
-<Anamolycard data={data}/>
+{/* <Anamolycard data={data}/> */}
 </div>
         </div>
         <div className="h-auto w-auto bg-white">
        
       
-      {chData && <LineChart data={chData}/>}
-      <Twin data={data}/>
+      {/* {chData && <LineChart data={chData}/>} */}
+      {/* <Twin data={data}/> */}
 
        </div>
         

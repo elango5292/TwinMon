@@ -1,12 +1,15 @@
 "use client"
-import { Engine, Scene, Vector3, FreeCamera, HemisphericLight, StandardMaterial, Texture, ExecuteCodeAction, ActionManager, Color4,Color3, Mesh, Layer } from "@babylonjs/core";
+import { Engine, Scene, Vector3, FreeCamera, HemisphericLight, StandardMaterial, Texture, ExecuteCodeAction, ActionManager, Color4,Color3, Mesh, Layer,ArcRotateCamera } from "@babylonjs/core";
 import { useEffect, useRef, useState } from "react";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 import "@babylonjs/loaders/glTF";
+import TwinUi from "./TwinUi";
 // import { ArcRotateCamera, GUI3DManager, CylinderPanel, VRExperienceHelper, 
 //   Plane, AdvancedDynamicTexture, Rectangle, StackPanel, InputText, TextBlock, Box, Button, EnvironmentHelper, VirtualKeyboard } from 'react-babylonjs'
 import { AdvancedDynamicTexture,StackPanel,Rectangle,TextBlock,LinearGradient } from '@babylonjs/gui/2D';
+import { usePathname } from 'next/navigation'
 export default function Pipe({ data }:any) {
+  const pathName=usePathname()
 
   const [colo1, setColo1] = useState(Color3.Red());
   const [colo2, setColo2] = useState(Color3.Green());
@@ -61,26 +64,32 @@ export default function Pipe({ data }:any) {
       changeNozzlePositionAbsolute(positionAbsolute.x, positionAbsolute.z);
       changeRodPositionAbsolute(positionAbsolute.z);
       changeBasePositionAbsolute(positionAbsolute.y);
-      var url = process.env.PUBLIC_URL + "/bg.png";
-      var background = new Layer("back","https://picsum.photos/200/300.jpg", mainScene.current);
-    background.isBackground = true;
+      
+     
 
     }
     
   }, [data]);
-  // changeRodPositionAbsolute(50);
+
   useEffect(() => {
+   
+
     if (canvas.current) {
       const engine = new Engine(canvas.current, true);
       const scene = new Scene(engine);
       mainScene.current=scene
-      const camera = new FreeCamera('camera1', new Vector3(-9.342750198299138, 9.35949206836682, -2.7322700114203506), scene);
+
+      var background = new Layer("back",'http://localhost:3000'+"/bgg.jpg", mainScene.current);
+      background.isBackground = true;
+      var advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("mainui",true,scene);
+const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, new Vector3(-9.342750198299138, 80.35949206836682, -2.7322700114203506), scene);
+      // const camera = new FreeCamera('camera1', new Vector3(-9.342750198299138, 9.35949206836682, -2.7322700114203506), scene);
       camera.attachControl(canvas.current, true);
       camera.speed = 1;
       const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
       light.intensity = 1;
 
-      SceneLoader.ImportMesh("", "/models/", "ender.glb", scene, function (newMeshes) {
+      const universal = SceneLoader.ImportMesh("", "/models/", "ender.glb", scene, function (newMeshes) {
         material1.current = new StandardMaterial("newMaterial", scene);
         material2.current = new StandardMaterial("newMaterial2", scene);
         material3.current = new StandardMaterial("newMaterial3", scene);
@@ -100,29 +109,50 @@ export default function Pipe({ data }:any) {
 
           if (m.name === "nozzle_primitive0"){
             console.log("Nozzle",noz0)
-            var advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("mainui",true,scene);
+            
             var panel = new StackPanel();  
           panel.width = 0.25;
           panel.rotation = 0.2;
           advancedTexture.addControl(panel);
-          
+        
+            
           
           var label = new Rectangle("label for " + "myMesh1");
           label.background = "black"
+        
           label.color = "white";
           label.height = "30px";
-          label.alpha = 0.5;
-          label.width = "100px";
+          label.alpha = 0.8;
+          label.width = "150px";
           label.cornerRadius = 20;
           label.thickness = 1;
-          label.linkOffsetY = -30;
+          label.linkOffsetY = -60;
           advancedTexture.addControl(label);
           label.linkWithMesh(m); 
              var text1 = new TextBlock();
-        text1.text = "Temp:";
+        text1.text = "N "+data.nozzleTemp+"°C "+data.xPos+"x "+data.yPos+"y "+data.zPos+"z";
         text1.color = "white";
         text1.fontSize=12;
         label.addControl(text1);  
+
+        // var label1 = new Rectangle("label for " + "noz");
+        //   label1.background = "black"
+        //   label1.color = "white";
+        //   label1.height = "30px";
+        //   label1.alpha = 0.8;
+        //   label1.width = "80px";
+        //   label1.cornerRadius = 10;
+        //   label1.thickness = 1;
+        //   label1.linkOffsetY = -90;
+        //   advancedTexture.addControl(label1);
+        //   label1.linkWithMesh(m); 
+
+        // var text2 = new TextBlock();
+        // text2.text = "Nozzle";
+        // text2.color = "white";
+        // text2.fontSize=12;
+        // text2.fontWeight = "bold";
+        // label1.addControl(text2);
           
           }
           if (m.name === "nozzle_primitive0" || m.name === "nozzle_primitive1" || m.name === "nozzle_primitive2" || m.name === "nozzle_primitive3" || m.name === "nozzle_primitive4" || m.name === "nozzle_primitive5") {
@@ -156,8 +186,57 @@ export default function Pipe({ data }:any) {
           
 
           if (m.name === "base_primitive0" || m.name === "base_primitive1" || m.name === "base_primitive2" || m.name === "base_primitive3" || m.name === "base_primitive4" || m.name === "base_primitive5") {
-            material3.current.diffuseColor = colo3;
+            material3.current.ambientColor= colo3;
+           
             m.material = material3.current;
+
+            
+          }
+          if (m.name === "base_primitive0" ) {
+            var panel = new StackPanel();  
+          panel.width = 0.25;
+          panel.rotation = 0.2;
+          advancedTexture.addControl(panel);
+          
+          
+          var label = new Rectangle("label for " + "base");
+          label.background = "black"
+          label.color = "white";
+          label.height = "30px";
+          label.alpha = 0.8;
+          label.width = "60px";
+          label.cornerRadius = 20;
+          label.thickness = 1;
+          label.linkOffsetY = 0;
+          advancedTexture.addControl(label);
+          label.linkWithMesh(m); 
+             var text1 = new TextBlock();
+        text1.text = "B "+data.bedTemp+"°C";
+        text1.color = "white";
+        text1.fontSize=12;
+        label.addControl(text1);  
+
+            
+
+      //   var label1 = new Rectangle("label for " + "noz");
+      //   label1.background = "black"
+      //   label1.color = "white";
+      //   label1.height = "28px";
+      //   label1.alpha = 0.8;
+      //   label1.width = "50px";
+      //   label1.cornerRadius = 10;
+      //   label1.thickness = 1;
+      //   label1.linkOffsetY = -30;
+      //   advancedTexture.addControl(label1);
+      //   label1.linkWithMesh(m); 
+
+      // var text2 = new TextBlock();
+      // text2.text = "Base";
+      // text2.color = "white";
+      // text2.fontSize=12;
+      // text2.fontWeight = "bold";
+      // label1.addControl(text2);
+
           }
         });
       }, null, function (scene, message, exception) {
@@ -165,8 +244,8 @@ export default function Pipe({ data }:any) {
       });
       let myMesh11 = noz0.current
       console.log("11",myMesh11)
-      camera.position = new Vector3(248.93757667651093, 299.76323215468295, 12.079756604162622);
-      camera.rotation = new Vector3(0.6731406779922281, 4.646166345275046, 0);
+      camera.position = new Vector3(348.93757667651093, 299.76323215468295, 0.079756604162622);
+      // camera.rotation = new Vector3(0.6731406779922281, 0.646166345275046, 0);
 
       const myMesh1 = scene.getMeshByName("nozzle_primitive0");
       console.log("22",myMesh1)
@@ -417,7 +496,8 @@ export default function Pipe({ data }:any) {
     };
   }
   return (
-    <div className="w-full h-full">
+    <div className="w-screen h-screen">
+      <TwinUi className="z-10 absolute w-full h-full " data={data}/>
       <canvas id="canvas" ref={canvas} className="w-full h-full"></canvas>
       <div className="flex flex-row gap-x-3">
          </div></div>
