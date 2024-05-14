@@ -1,2 +1,2 @@
 !#/bin/bash
-gunicorn app:app --bind 0.0.0.0:3924 --workers 1
+gunicorn app:app.py --bind 0.0.0.0:5000 --workers 1

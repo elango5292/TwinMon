@@ -214,7 +214,7 @@ export default function TwinUi(props: any) {
                 <AreaChart
       width={464}
       height={200}
-      data={props.tdata}
+      data={props.tdata.reverse()}
       margin={{
         top: 10,
         right: 30,
@@ -249,6 +249,9 @@ export default function TwinUi(props: any) {
         stroke="#E0E0E0"
         fillOpacity={1}
         fill="url(#colorUv)"
+        animationDuration={0}
+      
+  
       />
     </AreaChart>
 
@@ -389,6 +392,7 @@ export default function TwinUi(props: any) {
         stroke="#E0E0E0"
         fillOpacity={1}
         fill="url(#colorUv)"
+        animationDuration={0}
       />
     </AreaChart>
 
@@ -526,6 +530,7 @@ export default function TwinUi(props: any) {
         stroke="#E0E0E0"
         fillOpacity={1}
         fill="url(#colorUv)"
+        animationDuration={0}
       />
     </AreaChart>
 
@@ -614,11 +619,11 @@ export default function TwinUi(props: any) {
                     <div className="w-7 my-auto  h-auto">
 
                         {isPanelVisible ? <LuChevronLeft
-                            className={`w-5 h-5 my-auto  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
+                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
                         }`}
                             onClick={togglePanel}
                         /> : <LuChevronRight
-                            className={`w-5 h-5 my-auto  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
+                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
                     }`}
                             onClick={togglePanel}
                         />}

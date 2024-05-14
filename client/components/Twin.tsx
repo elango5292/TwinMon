@@ -45,6 +45,12 @@ export default function Pipe({ data,tdata }:any) {
 
   const canvas = useRef<HTMLCanvasElement | null>(null);
   const mcamera = useRef(null);
+  const upanel1 = useRef<StackPanel | null>(null)
+  const ulabel1 = useRef<Rectangle | null>(null)
+  const utext1 = useRef<TextBlock | null>(null)
+  const uadvancedTexture1 = useRef<AdvancedDynamicTexture | null>(null)
+  var bgUr = "http://192.168.57.33:3000"
+  // bgUr="http://localhost:3000"
 
   function temperatureToColor(value:any) {
     value = Math.max(0, Math.min(250, value));
@@ -77,8 +83,44 @@ export default function Pipe({ data,tdata }:any) {
      
 
     }
+
+
+    if (ulabel1.current && utext1.current && upanel1.current && uadvancedTexture1.current &&noz0.current) {
+      upanel1.current.width = 0.25;
+      upanel1.current.rotation = 0.2;
+
+      ulabel1.current.background = "black"
+        
+      ulabel1.current.color = "white";
+      ulabel1.current.height = "30px";
+      ulabel1.current.alpha = 0.8;
+      ulabel1.current.width = "150px";
+      ulabel1.current.cornerRadius = 20;
+      ulabel1.current.thickness = 1;
+      ulabel1.current.linkOffsetY = -60;
+uadvancedTexture1.current?.addControl(upanel1.current);
+ulabel1.current.linkWithMesh(noz0.current); 
+      utext1.current.text = "N "+data.nozzleTemp+"°C "+data.xPos+"x "+data.yPos+"y "+data.zPos+"z";
+      utext1.current.color = "white";
+        utext1.current.fontSize=12;
+      ulabel1.current.addControl(utext1.current); 
+    }
+   
+
+
     
   }, [data]);
+
+  // useEffect(() => {
+
+  //   const interval = setInterval(() => {
+    
+      
+  //   }, 1000)
+
+  //   return () => clearInterval(interval);
+    
+  // },[])
 
   useEffect(() => {
    
@@ -88,9 +130,10 @@ export default function Pipe({ data,tdata }:any) {
       const scene = new Scene(engine);
       mainScene.current=scene
 
-      var background = new Layer("back",'http://localhost:3000'+"/bgg.jpg", mainScene.current);
+      var background = new Layer("back",bgUr+"/bgg.jpg", mainScene.current);
       background.isBackground = true;
       var advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("mainui",true,scene);
+      uadvancedTexture1.current=advancedTexture
 const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, new Vector3(-9.342750198299138, 80.35949206836682, -2.7322700114203506), scene);
 mcamera.current=camera
       // const camera = new FreeCamera('camera1', new Vector3(-9.342750198299138, 9.35949206836682, -2.7322700114203506), scene);
@@ -121,6 +164,7 @@ mcamera.current=camera
             console.log("Nozzle",noz0)
             
             var panel = new StackPanel();  
+            upanel1.current = panel
           panel.width = 0.25;
           panel.rotation = 0.2;
           advancedTexture.addControl(panel);
@@ -128,6 +172,7 @@ mcamera.current=camera
             
           
           var label = new Rectangle("label for " + "myMesh1");
+          ulabel1.current=label
           label.background = "black"
         
           label.color = "white";
@@ -138,8 +183,9 @@ mcamera.current=camera
           label.thickness = 1;
           label.linkOffsetY = -60;
           advancedTexture.addControl(label);
-          label.linkWithMesh(m); 
+          label.linkWithMesh(noz0.current); 
              var text1 = new TextBlock();
+            utext1.current = text1
         text1.text = "N "+data.nozzleTemp+"°C "+data.xPos+"x "+data.yPos+"y "+data.zPos+"z";
         text1.color = "white";
         text1.fontSize=12;
@@ -204,6 +250,7 @@ mcamera.current=camera
           }
           if (m.name === "base_primitive0" ) {
             var panel = new StackPanel();  
+            upanel1.current = panel
           panel.width = 0.25;
           panel.rotation = 0.2;
           advancedTexture.addControl(panel);
