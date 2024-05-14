@@ -8,12 +8,13 @@ import TwinUi from "./TwinUi";
 //   Plane, AdvancedDynamicTexture, Rectangle, StackPanel, InputText, TextBlock, Box, Button, EnvironmentHelper, VirtualKeyboard } from 'react-babylonjs'
 import { AdvancedDynamicTexture,StackPanel,Rectangle,TextBlock,LinearGradient } from '@babylonjs/gui/2D';
 import { usePathname } from 'next/navigation'
-export default function Pipe({ data }:any) {
+export default function Pipe({ data,tdata }:any) {
   const pathName=usePathname()
 
   const [colo1, setColo1] = useState(Color3.Red());
   const [colo2, setColo2] = useState(Color3.Green());
   const [colo3, setColo3] = useState(Color3.FromHexString("#0060c7"));
+ const [cam, setCam] = useState("main");
 
   const material1 = useRef<StandardMaterial | null>(null);
   const material2 = useRef<StandardMaterial | null>(null);
@@ -43,6 +44,7 @@ export default function Pipe({ data }:any) {
   const base5 = useRef<Mesh | null>(null);
 
   const canvas = useRef<HTMLCanvasElement | null>(null);
+  const mcamera = useRef(null);
 
   function temperatureToColor(value:any) {
     value = Math.max(0, Math.min(250, value));
@@ -52,6 +54,13 @@ export default function Pipe({ data }:any) {
     var blueHex = blue.toString(16).padStart(2, '0');
     return '#' + redHex + '00' + blueHex;
   }
+
+  useEffect(() => {
+    targetMesh(cam)
+    
+  },[cam])
+
+
 
   useEffect(() => {
     if (material1.current) {
@@ -83,6 +92,7 @@ export default function Pipe({ data }:any) {
       background.isBackground = true;
       var advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("mainui",true,scene);
 const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, new Vector3(-9.342750198299138, 80.35949206836682, -2.7322700114203506), scene);
+mcamera.current=camera
       // const camera = new FreeCamera('camera1', new Vector3(-9.342750198299138, 9.35949206836682, -2.7322700114203506), scene);
       camera.attachControl(canvas.current, true);
       camera.speed = 1;
@@ -245,11 +255,13 @@ const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, n
       let myMesh11 = noz0.current
       console.log("11",myMesh11)
       camera.position = new Vector3(348.93757667651093, 299.76323215468295, 0.079756604162622);
+    
       // camera.rotation = new Vector3(0.6731406779922281, 0.646166345275046, 0);
 
       const myMesh1 = scene.getMeshByName("nozzle_primitive0");
       console.log("22",myMesh1)
       
+     
 
     
 
@@ -291,6 +303,30 @@ const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, n
     
     
   }, [colo2]);
+
+  function targetMesh(mesh:any) {
+    if (mesh=="nozzle" && mcamera.current && noz0.current) {
+      let nozpos = noz0.current.position.add(new Vector3(0, 0, 5));
+
+      // mcamera.current.position = new Vector3(548.93757667651093, 0.76323215468295, 0.079756604162622);
+mcamera.current.target = nozpos
+
+    }
+    if (mesh=="fan"&& mcamera.current &&base0.current){}
+    if (mesh=="bed" && mcamera.current && base0.current){
+
+      let basepos = base0.current.position.add(new Vector3(0, 0, 5));
+
+      // mcamera.current.position = new Vector3(548.93757667651093, 0.76323215468295, 0.079756604162622);
+mcamera.current.target = basepos
+    }
+    if(mesh=="main" && mcamera.current){
+
+      mcamera.current.position = new Vector3(348.93757667651093, 299.76323215468295, 0.079756604162622);
+    
+    }
+    
+  }
 
   function changeNozzlePosition(axis: string, value: number) {
     if (noz0.current && noz1.current && noz2.current && noz3.current && noz4.current) {
@@ -495,11 +531,15 @@ const camera = new ArcRotateCamera("camera1", -Math.PI / 2, Math.PI / 2.5, 10, n
       z: transformedZ
     };
   }
+  
+  // 
   return (
-    <div className="w-screen h-screen">
-      <TwinUi className="z-10 absolute w-full h-full " data={data}/>
-      <canvas id="canvas" ref={canvas} className="w-full h-full"></canvas>
-      <div className="flex flex-row gap-x-3">
-         </div></div>
+    <>
+    <div className="w-screen h-screen relative">
+      <TwinUi className="z-10 w-full h-auto absolute " tdata={tdata} data={data} setCam={setCam} />
+      <canvas id="canvas" ref={canvas} className="w-full h-full absolute"></canvas>
+      
+      </div>
+      </>
   )
 }

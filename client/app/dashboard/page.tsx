@@ -20,7 +20,7 @@ export default function Dashboard() {
     const [data, setData] = useState();
     const [chData, setChData] = useState();
     const [deviceData, setDeviceData] = useState([]);
-    const [showTwins, setShowTwins] = useState(true);
+    const [showTwins, setShowTwins] = useState(false);
 
 
     useEffect(() => {
@@ -66,33 +66,42 @@ export default function Dashboard() {
             <h2 className="text-3xl font-bold text-stone-900">
                 3d Printing Line
                 </h2></>
-            <div className="w-[68.39px] h-[39px] relative">
+            <div className="w-[68.39px] h-[39px] relative" onClick={()=>setShowTwins(!showTwins)}>
 <div className="w-[68.39px] h-[34.48px] left-0 top-[4.52px] absolute bg-neutral-800 rounded-[53px]"></div>
-<div className="w-[26.57px] h-[26.57px] left-[3.96px] top-[9.04px] absolute bg-white rounded-full"></div>
+<div className={`w-[26.57px] h-[26.57px] ${!showTwins?"left-[3.96px]":"right-[3.96px]"} top-[9.04px] absolute bg-white rounded-full`}></div>
 <div className="w-[19.22px] h-[19.22px] left-[39px] top-[12.43px] absolute"></div>
 <div className="w-[15.26px] h-[15.26px] left-[10.17px] top-[14.70px] absolute"></div>
-<div className="w-[9.04px] h-[9.04px] left-[12.43px] top-0 absolute bg-yellow-200 rounded-full border-4 border-yellow-600"></div>
+<div className={`w-[9.04px] h-[9.04px] ${!showTwins?"left-[12.43px]":"right-[12.43px]"}  top-0 absolute bg-yellow-200 rounded-full border-4 border-yellow-600`}></div>
 </div>
             </div>
    
+   
+   
+
+        </div>
+
+
+
+   {showTwins?<Twin data={data} tdata={chData}/>:<div className="h-auto w-auto bg-white">
    <div className="flex flex-row px-7">
        <LineCard machines={machines}/>
 
 <DetailsCard devicedata={deviceData} data={data}/>   
 
 
-</div>    
+</div>  
 <div className="mx-auto">
-{/* <Anamolycard data={data}/> */}
-</div>
-        </div>
-        <div className="h-auto w-auto bg-white">
+<Anamolycard data={data}/>
+</div> 
+<div className="h-auto w-auto bg-white">
        
       
-      {/* {chData && <LineChart data={chData}/>} */}
-      {/* <Twin data={data}/> */}
-
-       </div>
+       {chData && <LineChart data={chData} />}
+       {/* <Twin data={data}/> */}
+ 
+        </div>
+   </div> }
+       
         
         
         </>

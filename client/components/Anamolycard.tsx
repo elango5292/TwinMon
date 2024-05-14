@@ -1,8 +1,11 @@
 "use client"
 
+import { ChevronsDown, ShellIcon } from "lucide-react"
+
 export default function Anamolycard({data}: any) {
     // console.log("from anamoly",data)
     // ['Warping', 'Nozzle Clogging', 'Over Extrusion', 'Under Extrusion']
+    // data  ={prediction:[0,0,0,0,0,0,0]}
     return (
       <section className="w-full py-12 md:py-16 lg:py-20">
         <div className="container grid gap-6 px-4 md:px-6">
@@ -112,6 +115,66 @@ export default function Anamolycard({data}: any) {
                 </div>
               </div>
             </div>
+
+
+            <div className="bg-white rounded-lg shadow-md  text-[#000]">
+              <div className="p-6 flex flex-col items-start gap-4">
+
+
+              {data?.prediction[4]==1?<>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#FFCDD2] animate-ping flex items-center justify-center">
+                    <ShellIcon  className="w-5 h-5 text-[#C62828]" />
+                  </div>
+                  <span className="text-[#C62828] font-semibold">Warning!</span>
+                </div></>:<>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#C6E8C6] flex items-center justify-center">
+                    <ShellIcon  className="w-5 h-5 text-[#2E7D32]" />
+                  </div>
+                  <span className="text-[#2E7D32] font-semibold">Normal</span>
+                </div></>
+                    }
+
+
+
+
+                <div className="grid gap-1">
+                  <h3 className="text-lg font-semibold">Stringing</h3>
+                </div>
+              </div>
+            </div>
+
+
+            <div className="bg-white rounded-lg shadow-md  text-[#000]">
+              <div className="p-6 flex flex-col items-start gap-4">
+
+
+              {data?.prediction[5]==1?<>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#FFCDD2] animate-ping flex items-center justify-center">
+                    <ChevronsDown className="w-5 h-5 text-[#C62828]" />
+                  </div>
+                  <span className="text-[#C62828] font-semibold">Warning!</span>
+                </div></>:<>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#C6E8C6] flex items-center justify-center">
+                    <ChevronsDown className="w-5 h-5 text-[#2E7D32]" />
+                  </div>
+                  <span className="text-[#2E7D32] font-semibold">Normal</span>
+                </div></>
+                    }
+
+
+
+
+                <div className="grid gap-1">
+                  <h3 className="text-lg font-semibold">Poor Adhesion</h3>
+                </div>
+              </div>
+            </div>
+
+
           </div>
         </div>
       </section>

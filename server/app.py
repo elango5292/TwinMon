@@ -4,7 +4,7 @@ import numpy as np
 
 app = Flask(__name__)
 
-with open('model/linear_regression_model.pkl', 'rb') as f:
+with open('model/ln_model.pkl', 'rb') as f:
     model = pickle.load(f)
 
 @app.route('/predict', methods=['POST'])
@@ -19,6 +19,7 @@ def predict():
 
 # X = data[['Nozzle Temperature (C)', 'Bed Temperature (C)', 'Fan Speed (RPM)', 'Print Speed (mm/s)']]
 # y = data[['Warping', 'Nozzle Clogging', 'Over Extrusion', 'Under Extrusion']]
+# Warping, Nozzle Clogging, Over Extrusion, Under Extrusion, Stringing, Poor Adhesion
 
 
 @app.route('/', methods=['GET'])

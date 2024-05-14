@@ -1,7 +1,15 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { LuChevronLeft, LuChevronRight, } from "react-icons/lu";
-import { Cone, Cuboid, Eye, Fan, LayoutGrid, SquarePower } from 'lucide-react';
+import { Cone, Cuboid, CuboidIcon, Eye, Fan, LayoutGrid, SquarePower } from 'lucide-react';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+  } from "recharts";
 
 export default function TwinUi(props: any) {
     const data = props.data;
@@ -11,11 +19,25 @@ export default function TwinUi(props: any) {
         "Nozzle Clog": false,
         "Over Extrution": false,
         "Under Extrution": false,
-        "Warping": false,
+        "Warping": true,
         "Stringing": false,
         "Poor Adhesion": false,
         "Temperature": false
     })
+
+    useEffect(() => {
+        setStata({
+            "Warping": data?.prediction[0]==1?true:false,
+            "Nozzle Clog": data?.prediction[1]==1?true:false,
+            "Over Extrution": data?.prediction[2]==1?true:false,
+            "Under Extrution":data?.prediction[3]==1?true:false,
+            
+            "Stringing": data?.prediction[4]==1?true:false,
+            "Poor Adhesion": data?.prediction[5]==1?true:false,
+            "Temperature": data.nozTemp>250?true:false
+
+        })
+    },[data])
     const [tab, setTab] = useState<String>("universal");
     const togglePanel = () => {
         setIsPanelVisible(!isPanelVisible);
@@ -23,13 +45,18 @@ export default function TwinUi(props: any) {
     const toggleDetail = () => {
         setIsDetailVisible(!isDetailVisible);
     };
+
     const anamolys = ["Nozzle Clog", "Over Extrution", "Under Extrution", "Warping", "Stringing", "Poor Adhesion", "Temperature"];
+    // const hasIssue = true
+    
+    
     const hasIssue = Object.values(stata).some(value => value === true);
+    function UniversalPanel({ stata}:any) {
+        const anamolys = ["Nozzle Clog", "Over Extrution", "Under Extrution", "Warping", "Stringing", "Poor Adhesion", "Temperature"];
+        const [hasIssue, setHasIssue] = useReducer((prevState: any, newValue:any) => {
+            return Object.values(stata).some(value => value === true);
+        }, Object.values(stata).some(value => value === true));
 
-    const bgColorMain =  hasIssue ? '#8EF076' : '#FC6A6A';
-
-
-    function UniversalPanel() {
         return (
             <>
                 <div className="flex flex-col w-full gap-y-[31px] h-auto px-[15px] py-4">
@@ -77,14 +104,14 @@ export default function TwinUi(props: any) {
 
                     <div className="w-full h-auto flex flex-row items-center gap-x-2">
 
-                        <div className="w-[46px] flex flex-row justify-center items-center h-[43.18px] rounded-[10px] border border-[#b4b4b4]/80"
+                        <div className="w-auto px-3 flex flex-row justify-center items-center h-[43.18px] rounded-[10px] border border-[#b4b4b4]/80"
                             style={{
                                 background:
                                     "linear-gradient(to bottom, rgba(138,138,138,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(127,127,127,0.5) 100%)",
                             }}>
-
-                            <div className={`bg-${!hasIssue  ? "[#8EF076]  h-[12px] w-[12px]" : "[#FC6A6A]  h-[15px] w-[15px]"} absolute z-10 rounded-full `} />
-                            <div className={`bg-${ !hasIssue  ? "[#8EF076]/60" : "[#FC6A6A]/60 animate-ping"} rounded-full h-[21px] w-[21px] `} />
+ {/* <p className={`bg-[#8EF076]  h-[12px] w-[12px] w-[15px]"} absolute z-10 rounded-full `} /> */}
+                            <p className={`${!hasIssue  ? "bg-[#8EF076]  h-[12px] w-[12px]" : "bg-[#FC6A6A]  h-[15px] w-[15px]"} h-[12px] w-[12px] absolute z-10 rounded-full `} />
+                            <p className={`${ !hasIssue  ? "bg-[#8EF076]/60 animate-pulse" : "bg-[#FC6A6A]/60 animate-ping"}  rounded-full h-[21px] w-[21px] `} />
 
 
 
@@ -95,7 +122,7 @@ export default function TwinUi(props: any) {
                         </div>
                         <div className="flex flex-col">
                             <p className="text-lg font-semibold text-left text-[#e9e9e9]">Universal Status</p>
-                            <p className="text-[10px] font-medium text-left text-[#e9e9e9]">Machine is Normal</p>
+                            <p className="text-[10px] font-medium text-left text-[#e9e9e9]">{!hasIssue ? "Machine is Normal" : "Machine has issues"}</p>
 
 
                         </div>
@@ -116,14 +143,16 @@ export default function TwinUi(props: any) {
                             {
                                 anamolys.map((anamoly) => {
                                     return (
-                                        <div className="w-auto px-2 gap-x-2 h-[34px] flex flex-row rounded-[10px] justify-around items-center border border-[#b4b4b4]/80 "
+                                        <div id={anamoly+"Label"} className="w-auto px-2 gap-x-2 h-[34px] flex flex-row rounded-[10px] justify-around items-center border border-[#b4b4b4]/80 "
                                             style={{
                                                 background:
                                                     "linear-gradient(to bottom, rgba(138,138,138,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(127,127,127,0.5) 100%)",
                                             }}>
-                                            <div className="flex flex-row justify-center items-center">
-                                                <div className={`rounded-full h-[16px] w-[16px] bg-${stata[anamoly] == false ? "[#8EF076]/60" : "[#FC6A6A]/60 animate-ping"}`} />
-                                                <div className={`rounded-full  absolute h-[10px] w-[10px] bg-${stata[anamoly] == false ? "[#8EF076]" : "[#FC6A6A]"}`} />
+                                            <div id={anamoly+"Labels"} className="flex flex-row justify-center items-center">
+                                                {/* <p className={`rounded-full h-[16px] w-[16px] bg-[#8EF076]/60`} />
+                                                <p className={`rounded-full  absolute h-[10px] w-[10px] bg-[#8EF076]`} /> */}
+                                                <p id={`${anamoly}Signal1`} className={`rounded-full h-[16px] w-[16px] ${stata[anamoly] == false ? "bg-[#8EF076]/60 animate-pulse" : "bg-[#FC6A6A]/60 animate-ping"}`} />
+                                                <p id={`${anamoly}Signal`} className={`rounded-full  absolute h-[10px] w-[10px] ${stata[anamoly] == false ? "bg-[#8EF076]" : "bg-[#FC6A6A]"}`} />
 
                                             </div>
                                             <p className="text-xs font-medium whitespace-nowrap text-left text-[#e9e9e9]">{anamoly}</p>
@@ -160,14 +189,14 @@ export default function TwinUi(props: any) {
   style={{
     background:
       "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
-  }}>
+  }} onClick={()=>props.setCam("nozzle")}>
      <Eye className="h-[20px] w-[20px]" />
 
                         </div>
 
                     </div>
 
-                    <div onClick={()=>setTab("universal")} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] hover:!bg-[#a1c7e3] cursor-pointer "
+                    <div onClick={()=>{setTab("universal"); props.setCam("main")}} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] hover:!bg-[#a1c7e3] cursor-pointer "
   style={{
     background:
       "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
@@ -181,6 +210,47 @@ export default function TwinUi(props: any) {
                     
 
                 </div>
+
+                <AreaChart
+      width={464}
+      height={200}
+      data={props.tdata}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <defs>
+        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#ABC0D5" stopOpacity={1} />
+          <stop offset="95%" stopColor="#ABC0D5" stopOpacity={0.2} />
+        </linearGradient>
+      </defs>
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip
+        content={
+            ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+        <div className="w-auto px-2 h-[19px] flex flex-row items-center justify-center rounded-md bg-black/20 border border-[#d4d3d3]" >
+        <p className=" text-[12px] font-light text-left text-[#e5effb]">
+          {payload[0].value}°C
+        </p>
+      </div>)}
+      
+    return <p>null</p>}} 
+      />
+
+      <Area
+        type="monotone"
+        dataKey="nozzleTemp"
+        stroke="#E0E0E0"
+        fillOpacity={1}
+        fill="url(#colorUv)"
+      />
+    </AreaChart>
 
 
 
@@ -199,8 +269,8 @@ export default function TwinUi(props: any) {
                         "linear-gradient(to bottom, rgba(138,138,138,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(127,127,127,0.5) 100%)",
                 }}>
                 <div className="flex flex-row justify-center items-center">
-                    <div className={`rounded-full h-[16px] w-[16px] bg-${stata[anamoly] == false ? "[#8EF076]/60" : "[#FC6A6A]/60 animate-ping"}`} />
-                    <div className={`rounded-full  absolute h-[10px] w-[10px] bg-${stata[anamoly] == false ? "[#8EF076]" : "[#FC6A6A]"}`} />
+                    <div className={`rounded-full h-[16px] w-[16px] ${stata[anamoly] == false ? "bg-[#8EF076]/60" : "bg-[#FC6A6A]/60 animate-ping"}`} />
+                    <div className={`rounded-full  absolute h-[10px] w-[10px] ${stata[anamoly] == false ? "bg-[#8EF076]" : "bg-[#FC6A6A]"}`} />
 
                 </div>
                 <p className="text-xs font-medium whitespace-nowrap text-left text-[#e9e9e9]">{anamoly}</p>
@@ -228,25 +298,292 @@ export default function TwinUi(props: any) {
 </div>
 
 
+
+
             </div>
         )
     }
+
+
+
+
+
     function BaseTab(){
+        const nozAnamolys = ["Warping", "Stringing", "Poor Adhesion"]
         return (
-            <p>Base</p>
+            <div
+            className="w-full h-auto flex flex-col gap-y-6 pt-7 py-4 px-[23px]">
+
+                <div className="flex flex-row justify-between ">
+                    <div className="flex flex-row gap-x-5">
+                        <div className="flex flex-row items-center gap-x-1">
+                            <CuboidIcon className="text-[#E9E9E9] h-xs w-xs font-thin rotate-180" />
+                            <p className="text-lg font-medium text-left text-[#e9e9e9]">Bed</p>
+                        </div>
+                        <div className="w-[33px]  h-[33px] hover:!bg-[#a1c7e3] cursor-pointer flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] "
+  style={{
+    background:
+      "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
+  }}>
+     <Eye className="h-[20px] w-[20px]" />
+
+                        </div>
+
+                    </div>
+
+                    <div onClick={()=>setTab("universal")} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] hover:!bg-[#a1c7e3] cursor-pointer "
+  style={{
+    background:
+      "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
+  }}>
+    <LayoutGrid className="h-[24px] w-[24px]" />
+     
+
+                        </div>
+                    
+
+                    
+
+                </div>
+
+
+                <div className="flex flex-row justify-between h-[200] w-[474px]">
+
+                {/* <p className="text-xs font-medium rotate-90 p-1 w-auto h-auto  text-[#c8c8c8]">Temperature (C)</p> */}
+
+                <AreaChart
+      width={464}
+      height={200}
+      data={props.tdata}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <defs>
+        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#ABC0D5" stopOpacity={1} />
+          <stop offset="95%" stopColor="#ABC0D5" stopOpacity={0.2} />
+        </linearGradient>
+      </defs>
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip
+        content={
+            ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+        <div className="w-auto px-2 h-[19px] flex flex-row items-center justify-center rounded-md bg-black/20 border border-[#d4d3d3]" >
+        <p className=" text-[12px] font-light text-left text-[#e5effb]">
+          {payload[0].value}°C
+        </p>
+      </div>)}
+      
+    return <p>null</p>}} 
+      />
+
+      <Area
+        type="monotone"
+        dataKey="bedTemp"
+        stroke="#E0E0E0"
+        fillOpacity={1}
+        fill="url(#colorUv)"
+      />
+    </AreaChart>
+
+    </div>
+
+
+
+                <div className="flex flex-col gap-y-2">
+
+                <p className="text-xl font-bold text-left text-[#e9e9e9]">Status</p>
+                <div className="flex flex-row flex-wrap  w-full h-auto break-before-auto gap-x-2 gap-y-1">
+
+
+{
+    nozAnamolys.map((anamoly) => {
+        return (
+            <div className="w-auto px-2 gap-x-2 h-[34px] flex flex-row rounded-[10px] justify-around items-center border border-[#b4b4b4]/80 "
+                style={{
+                    background:
+                        "linear-gradient(to bottom, rgba(138,138,138,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(127,127,127,0.5) 100%)",
+                }}>
+                <div className="flex flex-row justify-center items-center">
+                    <div className={`rounded-full h-[16px] w-[16px] ${stata[anamoly] == false ? "bg-[#8EF076]/60" : "bg-[#FC6A6A]/60 animate-ping"}`} />
+                    <div className={`rounded-full  absolute h-[10px] w-[10px] ${stata[anamoly] == false ? "bg-[#8EF076]" : "bg-[#FC6A6A]"}`} />
+
+                </div>
+                <p className="text-xs font-medium whitespace-nowrap text-left text-[#e9e9e9]">{anamoly}</p>
+
+            </div>
+        )
+    })
+}
+
+
+</div>
+
+
+                </div>
+
+                <div className="flex flex-col">
+<p className="text-xl font-bold text-left text-[#e9e9e9]">Details</p>
+<div>
+  <p className="text-[13px] font-medium text-left text-[#e9e9e9]">Temperature: {data.bedTemp}</p>
+  <p className="text-[13px] font-medium text-left text-[#e9e9e9]">Y Position: {data.yPos}</p>
+ 
+</div>
+
+</div>
+
+
+
+
+            </div>
         )
     }
 
     function FanTab(){
+        const nozAnamolys = ["Nozzle Clog"]
         return (
-            <p>Fan</p>
+            <div
+            className="w-full h-auto flex flex-col gap-y-6 pt-7 py-4 px-[23px]">
+
+                <div className="flex flex-row justify-between ">
+                    <div className="flex flex-row gap-x-5">
+                        <div className="flex flex-row items-center gap-x-1">
+                            <Fan className="text-[#E9E9E9] h-xs w-xs font-thin rotate-180" />
+                            <p className="text-lg font-medium text-left text-[#e9e9e9]">Fan</p>
+                        </div>
+                        <div className="w-[33px]  h-[33px] hover:!bg-[#a1c7e3] cursor-pointer flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] "
+  style={{
+    background:
+      "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
+  }}>
+     <Eye className="h-[20px] w-[20px]" />
+
+                        </div>
+
+                    </div>
+
+                    <div onClick={()=>setTab("universal")} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#bcbcbc] hover:!bg-[#a1c7e3] cursor-pointer "
+  style={{
+    background:
+      "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
+  }}>
+    <LayoutGrid className="h-[24px] w-[24px]" />
+     
+
+                        </div>
+                    
+
+                    
+
+                </div>
+
+
+                <div className="flex flex-row justify-between h-[200] w-[474px]">
+
+                {/* <p className="text-xs font-medium rotate-90 p-1 w-auto h-auto  text-[#c8c8c8]">Temperature (C)</p> */}
+
+                <AreaChart
+      width={464}
+      height={200}
+      data={props.tdata}
+      margin={{
+        top: 10,
+        right: 30,
+        left: 0,
+        bottom: 0,
+      }}
+    >
+      <defs>
+        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="5%" stopColor="#ABC0D5" stopOpacity={1} />
+          <stop offset="95%" stopColor="#ABC0D5" stopOpacity={0.2} />
+        </linearGradient>
+      </defs>
+      <CartesianGrid strokeDasharray="3 3" />
+      <Tooltip
+        content={
+            ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  return (
+        <div className="w-auto px-2 h-[19px] flex flex-row items-center justify-center rounded-md bg-black/20 border border-[#d4d3d3]" >
+        <p className=" text-[12px] font-light text-left text-[#e5effb]">
+          {payload[0].value}
+        </p>
+      </div>)}
+      
+    return <p>null</p>}} 
+      />
+
+      <Area
+        type="monotone"
+        dataKey="fanSpeed"
+        stroke="#E0E0E0"
+        fillOpacity={1}
+        fill="url(#colorUv)"
+      />
+    </AreaChart>
+
+    </div>
+
+
+
+                <div className="flex flex-col gap-y-2">
+
+                <p className="text-xl font-bold text-left text-[#e9e9e9]">Status</p>
+                <div className="flex flex-row flex-wrap  w-full h-auto break-before-auto gap-x-2 gap-y-1">
+
+
+{
+    nozAnamolys.map((anamoly) => {
+        return (
+            <div className="w-auto px-2 gap-x-2 h-[34px] flex flex-row rounded-[10px] justify-around items-center border border-[#b4b4b4]/80 "
+                style={{
+                    background:
+                        "linear-gradient(to bottom, rgba(138,138,138,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(127,127,127,0.5) 100%)",
+                }}>
+                <div className="flex flex-row justify-center items-center">
+                    <div className={`rounded-full h-[16px] w-[16px] ${stata[anamoly] == false ? "bg-[#8EF076]/60" : "bg-[#FC6A6A]/60 animate-ping"}`} />
+                    <div className={`rounded-full  absolute h-[10px] w-[10px] ${stata[anamoly] == false ? "bg-[#8EF076]" : "bg-[#FC6A6A]"}`} />
+
+                </div>
+                <p className="text-xs font-medium whitespace-nowrap text-left text-[#e9e9e9]">{anamoly}</p>
+
+            </div>
+        )
+    })
+}
+
+
+</div>
+
+
+                </div>
+
+                <div className="flex flex-col">
+<p className="text-xl font-bold text-left text-[#e9e9e9]">Details</p>
+<div>
+  <p className="text-[13px] font-medium text-left text-[#e9e9e9]">Fan Speed: {data.fanSpeed}</p>
+</div>
+
+</div>
+
+
+
+
+            </div>
         )
     }
 
 
     return (
-        <div className="w-full h-full " {...props}>
-            <div className=" h-auto w-auto absolute top-[20%] left-[0%]  flex flex-row items-center">
+        <div className=" " {...props}>
+            <div className=" h-auto w-auto top-[20vh] absolute left-0  flex flex-row items-center">
 
 
                 <div
@@ -296,8 +633,8 @@ export default function TwinUi(props: any) {
 
 
 
-            <div className=" h-auto w-auto absolute top-[15%] right-[0%] ">
-                <div className={`flex transition duration-300 ease-in-out flex-row ${isDetailVisible ? "" : "transform translate-x-[90%]"}`} >
+            <div className=" h-auto w-auto absolute top-[15vh] right-[0vw] ">
+                <div className={`flex transition duration-300 ease-in-out flex-row ${isDetailVisible ? "" : "transform translate-x-[92%]"}`} >
                     <div className="w-[28px] mt-4 -mr-[1px] flex flex-col justify-center h-[40px] rounded-tl-[10px] rounded-bl-[10px] border border-[#bcbcbc] "
                         style={{
                             background:
@@ -313,7 +650,7 @@ export default function TwinUi(props: any) {
                                 "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 44%, rgba(78,76,76,0.5) 80%)",
                         }}
                     >
-                        {tab === "nozzle" ? <NozzleTab /> : (tab === "base" ? <BaseTab /> :(tab==="fan" ? <FanTab />:(tab==="universal" ? <UniversalPanel />:<></>)))}
+                        {tab === "nozzle" ? <NozzleTab /> : (tab === "base" ? <BaseTab /> :(tab==="fan" ? <FanTab />:(tab==="universal" ? <UniversalPanel stata={stata} />:<></>)))}
                         
                     </div>
 
