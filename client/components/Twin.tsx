@@ -49,8 +49,8 @@ export default function Pipe({ data,tdata }:any) {
   const ulabel1 = useRef<Rectangle | null>(null)
   const utext1 = useRef<TextBlock | null>(null)
   const uadvancedTexture1 = useRef<AdvancedDynamicTexture | null>(null)
-  var bgUr = "http://192.168.57.33:3000"
-  // bgUr="http://localhost:3000"
+  // var bgUr = "http://192.168.57.33:3000"
+  var bgUr="http://localhost:3000"
 
   function temperatureToColor(value:any) {
     value = Math.max(0, Math.min(250, value));
@@ -141,8 +141,8 @@ mcamera.current=camera
       camera.speed = 1;
       const light = new HemisphericLight('light1', new Vector3(0, 1, 0), scene);
       light.intensity = 1;
-
       const universal = SceneLoader.ImportMesh("", "/models/", "ender.glb", scene, function (newMeshes) {
+        console.log("newMeshes",newMeshes)
         material1.current = new StandardMaterial("newMaterial", scene);
         material2.current = new StandardMaterial("newMaterial2", scene);
         material3.current = new StandardMaterial("newMaterial3", scene);

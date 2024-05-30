@@ -20,6 +20,7 @@ const config: Config = {
       },
       boxShadow: {
         custom: '0px 2px 10.600000381469727px 0 rgba(172,191,213,0.4)',
+        dbutton:'0px 6px 14.399999618530273px 3px rgba(255,243,243,0.25)',
       },
     },
   },

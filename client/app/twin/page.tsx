@@ -7,16 +7,17 @@ import TwinUi from "@/components/TwinUi"
 export default function Twinn() {
 
     var data =  {
-        "id": "66338d76921cef5284d7acb9",
-        "nozzleTemp": 178,
-        "bedTemp": 600,
-        "xPos": 95,
-        "yPos": 139,
-        "zPos": 0,
-        "fanSpeed": 80,
-        "printerSpeed": 604,
-        "createdAt": "2024-05-02T12:56:22.761Z"
-    }
+        id: '6644635c143e6838bf493c05',
+        nozzleTemp: 29,
+        bedTemp: 29,
+        xPos: 3,
+        yPos: 0,
+        zPos: 34,
+        fanSpeed: 0,
+        printerSpeed: 0,
+        createdAt: "2024-05-15T07:25:16.304Z",
+        prediction: [ 1, 0, -0, 2, -1, 0 ]
+      }
 
     var tdata = [
         {
