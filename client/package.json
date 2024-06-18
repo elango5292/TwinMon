@@ -19,6 +19,7 @@
     "@babel/core": "^7.24.4",
     "@babylonjs/core": "^7.2.0",
     "@babylonjs/loaders": "^7.2.1",
+    "@babylonjs/materials": "^7.9.0",
     "@nextui-org/react": "^2.3.6",
     "@nextui-org/switch": "^2.0.28",
     "@nivo/api": "^0.74.1",
@@ -26,7 +27,9 @@
     "@nivo/line": "^0.85.1",
     "@prisma/client": "^5.13.0",
     "axios": "^1.6.8",
+    "child_process": "^1.0.2",
     "dotenv-cli": "^7.4.1",
+    "lucide-react": "^0.383.0",
     "next": "^14.2.2",
     "react": "^18.2.0",
     "react-babylonjs": "^3.1.30",
@@ -35,6 +38,9 @@
     "rechart": "^0.0.1",
     "recharts": "^2.12.7"
   },
+  "browser":{
+    "child_process": false
+    }  ,
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",

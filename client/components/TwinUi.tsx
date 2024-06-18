@@ -54,32 +54,32 @@ export default function TwinUi(props: any) {
     const anamolys = ["Nozzle Clog", "Over Extrution", "Under Extrution", "Warping", "Stringing", "Poor Adhesion", "Temperature"];
     // const hasIssue = true
     const [onControll, setOnControll] = useState(false);
-const contapi = "http://192.168.57.81:5000"
+    // const contapi = "http://192.168.57.81:5000"
 
     const hasIssue = Object.values(stata).some(value => value === true);
     const controller = debounce(async (cmd: any) => {
-if (onControll === false){
-    const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+        if (onControll === false) {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
-const raw = JSON.stringify({
-  "command": cmd
-});
+            const raw = JSON.stringify({
+                "command": cmd
+            });
 
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow"
-};
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
 
-fetch("http://192.168.57.81:5000/control", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
-}
-        
-      }, 1000);
+            fetch("http://192.168.57.97:5000/control", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
+        }
+
+    }, 1000);
     function UniversalPanel({ stata }: any) {
         const anamolys = ["Nozzle Clog", "Over Extrution", "Under Extrution", "Warping", "Stringing", "Poor Adhesion", "Temperature"];
         const [hasIssue, setHasIssue] = useReducer((prevState: any, newValue: any) => {
@@ -632,67 +632,160 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
 
 
 
-    function ControllPanel(props: any) {
-        const [customCode, setCustomCode] = useState("")
-        const [fanSpeed, setFanSpeed] = useState(data.fanSpeed)
-        const [nozTemp, setNozTemp] = useState(data.nozzleTemp)
-        const [bedTemp, setBedTemp] = useState(data.bedTemp)
-        const [pos, setPos] = useState({"x":data.xPos,"y":data.yPos,"z":data.zPos})
-
-        useEffect(() => {
-            controller(`M106 S${fanSpeed}`)
-        
-        },[fanSpeed])
-
-        useEffect(() => {
-            controller(`M104 S${nozTemp}`)
-        
-        },[nozTemp])
-        useEffect(() => {
-            controller(`M140 S${bedTemp}`)
-        
-        },[bedTemp])
-
-        useEffect(() => {
-            controller(`G1 X${pos.x} Z${pos.z} Y${pos.y}`)
-        
-        },[pos])
 
 
+    return (
+        <div className=" " {...props}>
+            <div className=" h-auto w-auto top-[20vh] absolute left-0  flex flex-row items-center">
 
-        return (
-            <div
-                className="w-full h-auto flex flex-col gap-y-6 pt-7 py-4 ">
 
-                {/* top head */}
-                <div className="flex flex-row justify-between px-[23px] ">
-                    <div className="flex flex-row gap-x-5">
-                        <div className="flex flex-row items-center gap-x-1">
-                            <BiSolidJoystickButton className="text-[#E9E9E9] h-xs w-xs font-thin rotate-180" />
-                            <p className="text-lg font-medium text-left text-[#e9e9e9]">Control Panel</p>
-                        </div>
+                <div
+                    className={`h-auto min-w-[350px] w-auto flex flex-row py-1 bg-transparent justify-between rounded-r-[10px] border-l-0 border border-[#c9c9c9]  transition duration-300 ease-in-out ${isPanelVisible ? "" : "transform translate-x-[-90%]"}
+`}
+                    style={{ background: "linear-gradient(to bottom, #717171 0%, #807f7f 54%, #6f6f6f 100%)" }}
+                    onClick={togglePanel}>
+                    <>
+                        <div className="flex flex-col w-full h-full bg-transparent" onClick={(e) => e.stopPropagation()}>
+                            <div className={` ${isPanelVisible ? "w-[95%]" : "w-[0%]"} h-[52px] px-2 hover:bg-[#D3D3D3]/60 cursor-pointer flex flex-row items-center gap-x-2 bg-[#828282]/60 border border-[#454545]/60 `} onClick={() => setTab("nozzle")} >
+                                <Cone className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
+                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Nozzle (N)</p>
+
+                            </div>
+                            <div className="w-[95%] flex flex-row gap-x-2 items-center h-[52px] px-2 hover:bg-[#D3D3D3]/60 cursor-pointer bg-[#828282]/60 border border-[#454545]/60" onClick={() => setTab("base")}>
+                                <Cuboid className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
+                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Base (B)</p>
+
+
+                            </div>
+                            <div className="w-[95%] flex flex-row gap-x-2 cursor-pointer px-2 hover:bg-[#D3D3D3]/60 items-center  h-[52px] bg-[#828282]/60 border border-[#454545]/60 " onClick={() => setTab("fan")} >
+                                <Fan className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
+                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Fan (F)</p>
+
+
+                            </div>
+                        </div></>
+                    <div className="w-7 my-auto  h-auto">
+
+                        {isPanelVisible ? <LuChevronLeft
+                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
+                        }`}
+                            onClick={togglePanel}
+                        /> : <LuChevronRight
+                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
+                    }`}
+                            onClick={togglePanel}
+                        />}
+
 
                     </div>
+                </div>
 
-                    <div onClick={() => { setTab("universal"); props.setCam("main") }} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#A9C1D5] hover:!bg-[#a1c7e3] cursor-pointer "
+            </div>
+
+
+
+
+            {/* right */}
+            <div className=" h-auto w-auto absolute top-[15vh] right-[0vw] bg-transparent ">
+                <div className={`flex transition duration-300 ease-in-out flex-row ${isDetailVisible ? "" : "transform translate-x-[92%]"}`} >
+                    <div className="w-[28px] mt-4 -mr-[1px] flex flex-col justify-center h-[40px] rounded-tl-[10px] rounded-bl-[10px] border border-[#A9C1D5] "
                         style={{
                             background:
                                 "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
-                        }}>
-                        <LayoutGrid className="h-[24px] w-[24px]" />
+                        }} onClick={toggleDetail}>
+                        {!isDetailVisible ? <LuChevronLeft className="mx-auto my-auto w-5 h-5 text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer" /> : <LuChevronRight className="mx-auto my-auto w-5 h-5 text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer" />}
 
+                    </div>
+                    <div
+                        className={`w-[488px] min-h-[600px] z-10 max-h-screen h-auto rounded-l-[10px] border border-r-0 border-[#A9C1D5] backdrop-blur-md `}
+                        style={{
+                            background:
+                                "linear-gradient(to bottom, rgba(68,68,68,0.3) 0%, rgba(128,127,127,0.2) 44%, rgba(78,76,76,0.3) 50%)",
+                        }}
+                    >
+                        {tab === "nozzle" ? <NozzleTab /> : (tab === "base" ? <BaseTab /> : (tab === "fan" ? <FanTab /> : (tab === "universal" ? <UniversalPanel stata={stata} /> : (tab === "controll" && <><ControllPanel stata={stata} data={data} controller={controller} setTab={setTab} /></>))))}
 
                     </div>
 
+                </div>
 
+
+            </div>
+
+
+        </div>
+    );
+}
+
+
+
+
+
+
+function ControllPanel(props: any) {
+    const data = props.data
+    const [customCode, setCustomCode] = useState("")
+    const [fanSpeed, setFanSpeed] = useState(data.fanSpeed)
+    const [nozTemp, setNozTemp] = useState(data.nozzleTemp)
+    const [bedTemp, setBedTemp] = useState(data.bedTemp)
+    const [pos, setPos] = useState({ "x": data.xPos, "y": data.yPos, "z": data.zPos })
+
+    useEffect(() => {
+        props.controller(`M106 S${fanSpeed}`)
+
+    }, [fanSpeed])
+
+    useEffect(() => {
+        props.controller(`M104 S${nozTemp}`)
+
+    }, [nozTemp])
+    useEffect(() => {
+        props.controller(`M140 S${bedTemp}`)
+
+    }, [bedTemp])
+
+    useEffect(() => {
+        props.controller(`G1 X${pos.x} Z${pos.z} Y${pos.y}`)
+
+    }, [pos])
+    
+
+
+
+
+    return (
+        <div
+            className="w-full h-auto flex flex-col gap-y-6 pt-7 py-4 ">
+
+            {/* top head */}
+            <div className="flex flex-row justify-between px-[23px] ">
+                <div className="flex flex-row gap-x-5">
+                    <div className="flex flex-row items-center gap-x-1">
+                        <BiSolidJoystickButton className="text-[#E9E9E9] h-xs w-xs font-thin rotate-180" />
+                        <p className="text-lg font-medium text-left text-[#e9e9e9]">Control Panel</p>
+                    </div>
+
+                </div>
+
+                <div onClick={() => { props.setTab("universal"); props.setCam("main") }} className="w-[33px]  h-[33px] flex flex-row items-center justify-center rounded-[5px] border border-[#A9C1D5] hover:!bg-[#a1c7e3] cursor-pointer "
+                    style={{
+                        background:
+                            "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
+                    }}>
+                    <LayoutGrid className="h-[24px] w-[24px]" />
 
 
                 </div>
 
-<div className="w-full h-[1px] bg-[#CFD7E0] my-1"/>
 
-{/* position */}
-<>
+
+
+            </div>
+
+            <div className="w-full h-[1px] bg-[#CFD7E0] my-1" />
+
+            {/* position */}
+            <>
                 <div className="px-[23px]">
                     <div className="flex flex-row justify-center">
                         <div className="flex flex-row gap-x-[2px]">
@@ -703,9 +796,9 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)-1).toString(),y:(parseInt(pos.y)+1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) - 1).toString(), y: (parseInt(pos.y) + 1).toString() })}
                                 >
-<ChevronUp className="h-[24px] mt-2 mx-auto w-[24px] -rotate-45 "/>
+                                    <ChevronUp className="h-[24px] mt-2 mx-auto w-[24px] -rotate-45 " />
 
                                 </div>
                                 <div
@@ -713,10 +806,10 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)-1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) - 1).toString() })}
                                 >
 
-<MoveLeft className="h-[24px] mt-3 mx-auto w-[18px] text-bold "/>
+                                    <MoveLeft className="h-[24px] mt-3 mx-auto w-[18px] text-bold " />
 
 
                                 </div>
@@ -725,10 +818,10 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)-1).toString(),y:(parseInt(pos.y)-1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) - 1).toString(), y: (parseInt(pos.y) - 1).toString() })}
                                 >
 
-<ChevronDown className="h-[24px] mt-2 mx-auto w-[24px] rotate-45 "/>
+                                    <ChevronDown className="h-[24px] mt-2 mx-auto w-[24px] rotate-45 " />
 
                                 </div>
                             </div>
@@ -741,9 +834,9 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,y:(parseInt(pos.y)+1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, y: (parseInt(pos.y) + 1).toString() })}
                                 >
-                                    <MoveUp className="h-[24px] mt-4 mx-auto w-[18px]  "/>
+                                    <MoveUp className="h-[24px] mt-4 mx-auto w-[18px]  " />
 
 
                                 </div>
@@ -753,10 +846,10 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,y:(parseInt(pos.y)-1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, y: (parseInt(pos.y) - 1).toString() })}
                                 >
 
-<MoveDown className="h-[24px] mt-2 mx-auto w-[18px]  "/>
+                                    <MoveDown className="h-[24px] mt-2 mx-auto w-[18px]  " />
 
                                 </div>
                             </div>
@@ -768,10 +861,10 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)+1).toString(),y:(parseInt(pos.y)+1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) + 1).toString(), y: (parseInt(pos.y) + 1).toString() })}
                                 >
 
-<ChevronUp className="h-[24px] mt-2 mx-auto w-[24px] rotate-45 "/>
+                                    <ChevronUp className="h-[24px] mt-2 mx-auto w-[24px] rotate-45 " />
 
                                 </div>
                                 <div
@@ -779,21 +872,21 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)+1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) + 1).toString() })}
                                 >
 
-<MoveRight className="h-[24px] mt-3 mx-auto w-[18px]  "/>
+                                    <MoveRight className="h-[24px] mt-3 mx-auto w-[18px]  " />
                                 </div>
                                 <div
                                     className="w-[47px] h-11 rounded-[5px] border border-[#ACBFD5] shadow-[0px_2px_0px_0_#abc0d6] hover:!shadow-[0px_2px_0px_0_#abc0d6,0px_6px_14.399999618530273px_3px_rgba(255,243,243,0.25)]"
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.x)+1).toString(),y:(parseInt(pos.y)-1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.x) + 1).toString(), y: (parseInt(pos.y) - 1).toString() })}
                                 >
 
 
-<ChevronDown className="h-[24px] mt-2 mx-auto w-[24px] -rotate-45 "/>
+                                    <ChevronDown className="h-[24px] mt-2 mx-auto w-[24px] -rotate-45 " />
                                 </div>
                             </div>
 
@@ -803,9 +896,9 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,x:(parseInt(pos.z)+1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, x: (parseInt(pos.z) + 1).toString() })}
                                 >
-<ArrowBigUpDash className="h-[24px] mt-3 mx-auto w-[18px]  "/>
+                                    <ArrowBigUpDash className="h-[24px] mt-3 mx-auto w-[18px]  " />
 
                                 </div>
                                 <div
@@ -813,9 +906,9 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                     style={{
                                         background:
                                             "linear-gradient(to bottom, rgba(68,68,68,0.4) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                    }} onClick={()=>setPos({...pos,z:(parseInt(pos.z)-1).toString()})}
+                                    }} onClick={() => setPos({ ...pos, z: (parseInt(pos.z) - 1).toString() })}
                                 >
-<ArrowBigDownDash className="h-[24px] mt-3 mx-auto w-[18px]  "/>
+                                    <ArrowBigDownDash className="h-[24px] mt-3 mx-auto w-[18px]  " />
 
                                 </div>
 
@@ -835,7 +928,7 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                             <div className="flex flex-row">
                                 <div className="flex flex-col gap-y-1 items-center ">
                                     <p className="text-[10px] font-bold text-left text-[#e4effd]">X</p>
-                                    <input type="number" max="220" min="1" value={pos.x} onChange={(e) => setPos({...pos,z:e.target.value})}
+                                    <input type="number" max="220" min="1" value={pos.x} onChange={(e) => setPos({ ...pos, x: e.target.value })}
                                         className="w-[33px] h-[33px] text-[10px] font-medium text-center rounded-[5px] border border-[#ACC0D6] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                         style={{
                                             background:
@@ -847,7 +940,7 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
 
                                 <div className="flex flex-col gap-y-1 items-center ">
                                     <p className="text-[10px] font-bold text-left text-[#e4effd]">Y</p>
-                                    <input type="number" max="220" min="1" value={pos.y} onChange={(e) => setPos({...pos,y:e.target.value})}
+                                    <input type="number" max="220" min="1" value={pos.y} onChange={(e) => setPos({ ...pos, y: e.target.value })}
                                         className="w-[33px] h-[33px] text-[10px] font-medium text-center rounded-[5px] border border-[#ACC0D6] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                         style={{
                                             background:
@@ -859,7 +952,7 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
 
                                 <div className="flex flex-col gap-y-1 items-center ">
                                     <p className="text-[10px] font-bold text-left text-[#e4effd]">Z</p>
-                                    <input type="number" max="220" min="1" value={pos.z} onChange={(e) => setPos({...pos,z:e.target.value})}
+                                    <input type="number" max="220" min="1" value={pos.z} onChange={(e) => setPos({ ...pos, z: e.target.value })}
                                         className="w-[33px] h-[33px] text-[10px] font-medium text-center rounded-[5px] border border-[#ACC0D6] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none "
                                         style={{
                                             background:
@@ -874,7 +967,7 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
                                 style={{
                                     background:
                                         "linear-gradient(to bottom, rgba(68,68,68,0.2) 0%, rgba(177,177,177,0.5) 54%, rgba(78,76,76,0.2) 100%)",
-                                }} onClick={() => { controller("G28") }}
+                                }} onClick={() => { setPos({ "x": "0", "y": "0", "z": "0" }) }}
                             >
                                 <Home />
                                 <>
@@ -930,194 +1023,106 @@ fetch("http://192.168.57.81:5000/control", requestOptions)
 
 
                 </div>
-                </>
+            </>
 
-                <div className="w-full h-[1px] bg-[#CFD7E0] my-2"/>
-{/* temperature */}
+            <div className="w-full h-[1px] bg-[#CFD7E0] my-2" />
+            {/* temperature */}
 
-<div className="flex flex-col px-[23px]">
-    <div className="flex flex-row">
-        <Thermometer className="w-auto h-5" />
-        <p className="text-base font-semibold text-left text-[#e9e9e9]">Temperature</p>
+            <div className="flex flex-col px-[23px]">
+                <div className="flex flex-row">
+                    <Thermometer className="w-auto h-5" />
+                    <p className="text-base font-semibold text-left text-[#e9e9e9]">Temperature</p>
 
-    </div>
+                </div>
 
-    <div className="flex flex-row flex-wrap gap-x-2 gap-y-2 my-3">
-        {/* each */}
-        <div className="flex flex-row gap-x-2">
-        <p className="text-sm  text-left text-[#e9e9e9]">Nozzle Temp:</p>
-        <div className="flex flex-row items-center ">
-            <button>
-           <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
-           <input  className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={nozTemp} onChange={(e) => setNozTemp(e.target.value)}>
-
-
-           </input>
-           <button>
-           <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
-           </button>
-        </div>
-
-        </div>
-
-        <div className="flex flex-row gap-x-2">
-        <p className="text-sm  text-left text-[#e9e9e9]">Bed Temp:</p>
-        <div className="flex flex-row items-center ">
-            <button>
-           <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
-           <input className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={bedTemp} onChange={(e) => setBedTemp(e.target.value)}>
+                <div className="flex flex-row flex-wrap gap-x-2 gap-y-2 my-3">
+                    {/* each */}
+                    <div className="flex flex-row gap-x-2">
+                        <p className="text-sm  text-left text-[#e9e9e9]">Nozzle Temp:</p>
+                        <div className="flex flex-row items-center ">
+                            <button>
+                                <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
+                            <input className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={nozTemp} onChange={(e) => setNozTemp(e.target.value)}>
 
 
-           </input>
-           <button>
-           <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
-           </button>
-        </div>
+                            </input>
+                            <button>
+                                <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
+                            </button>
+                        </div>
 
-        </div>
+                    </div>
 
-        <div className="flex flex-row gap-x-2">
-        <p className="text-sm  text-left text-[#e9e9e9]">Fan speed:</p>
-        <div className="flex flex-row items-center ">
-            <button>
-           <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
-           <input className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={fanSpeed} onChange={(e) => setFanSpeed(parseInt(e.target.value))}>
-
-
-           </input>
-           <button>
-           <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
-           </button>
-        </div>
-
-        </div>
-       
-
-    </div>
-</div>
-
-<div className="w-full h-[1px] bg-[#CFD7E0] my-1"/>
-{/* custom */}
-<div className="flex flex-col gap-y-2 px-[23px] mb-4">
-    <div className="flex flex-row items-center gap-x-1">
-        <PenBox className="w-[18px] h-[18px]"></PenBox>
-        <p className="text-sm font-semibold text-left text-[#e9e9e9]">G-Code:</p>
-    </div>
-    <div className="flex flex-row gap-x-1">
-        <>
-        <input  key="customCodeinput"  onChange={(e) => setCustomCode(e.target.value)} value={customCode} placeholder="M 423.."  className="w-[164px] px-1 h-7 rounded-[5px] placeholder:text-[#c6c6c6] text-[#d3d3d3] border border-[#A9C1D5]"
-  style={{
-    background:
-      "linear-gradient(to bottom, rgba(116,116,116,0.2) 0%, rgba(128,127,127,0.3) 54%, rgba(170,168,168,0.2) 100%)",
-    boxShadow: "0px 2px 0px 0 rgba(255,255,255,0.25)",
-  }}></input>
-        </>
-        <button onClick={() => { controller(customCode) }} className="w-[30px] h-7 rounded-[5px] border border-[#A9C1D5] shadow-[0_2px_0px_0_rgba(255,255,255,0.25)] hover:shadow-[0px_4px_4px_0_rgba(255,255,255,0.25),0_2px_0px_0_rgba(255,255,255,0.25)]"
-  style={{
-    background:
-      "linear-gradient(to bottom, rgba(116,116,116,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(170,168,168,0.5) 100%)",
-    
-  }}>
-<Play className="w-[18px] h-[18px] mx-auto my-auto"/>
-
-        </button>
-
-    </div>
-
-</div>
+                    <div className="flex flex-row gap-x-2">
+                        <p className="text-sm  text-left text-[#e9e9e9]">Bed Temp:</p>
+                        <div className="flex flex-row items-center ">
+                            <button>
+                                <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
+                            <input className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={bedTemp} onChange={(e) => setBedTemp(e.target.value)}>
 
 
+                            </input>
+                            <button>
+                                <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div className="flex flex-row gap-x-2">
+                        <p className="text-sm  text-left text-[#e9e9e9]">Fan speed:</p>
+                        <div className="flex flex-row items-center ">
+                            <button>
+                                <Minus className="w-[21px] h-[25px] rounded-l-[3px] -mr-[1px] bg-gradient-to-b hover:bg-[#cfd2d6] from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " /></button>
+                            <input className="w-[50px] max-h-[25px] text-xs align-middle py-1 text-center   bg-[#b1bed2]/[0.08] border border-[#A9C1D5] px-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" type="number" value={fanSpeed} onChange={(e) => setFanSpeed(parseInt(e.target.value))}>
 
 
+                            </input>
+                            <button>
+                                <Plus className="w-[21px] h-[25px] rounded-r-[3px] -ml-[1px] hover:bg-[#cfd2d6] bg-gradient-to-b from-[#b1bed2]/50 to-[#b1bed2]/50 border border-[#A9C1D5] " />
+                            </button>
+                        </div>
+
+                    </div>
+
+
+                </div>
             </div>
-        )
 
-    }
-
-
-    return (
-        <div className=" " {...props}>
-            <div className=" h-auto w-auto top-[20vh] absolute left-0  flex flex-row items-center">
-
-
-                <div
-                    className={`h-auto min-w-[350px] w-auto flex flex-row py-1 bg-transparent justify-between rounded-r-[10px] border-l-0 border border-[#c9c9c9]  transition duration-300 ease-in-out ${isPanelVisible ? "" : "transform translate-x-[-90%]"}
-`}
-                    style={{ background: "linear-gradient(to bottom, #717171 0%, #807f7f 54%, #6f6f6f 100%)" }}
-                    onClick={togglePanel}>
+            <div className="w-full h-[1px] bg-[#CFD7E0] my-1" />
+            {/* custom */}
+            <div className="flex flex-col gap-y-2 px-[23px] mb-4">
+                <div className="flex flex-row items-center gap-x-1">
+                    <PenBox className="w-[18px] h-[18px]"></PenBox>
+                    <p className="text-sm font-semibold text-left text-[#e9e9e9]">G-Code:</p>
+                </div>
+                <div className="flex flex-row gap-x-1">
                     <>
-                        <div className="flex flex-col w-full h-full bg-transparent" onClick={(e) => e.stopPropagation()}>
-                            <div className={` ${isPanelVisible ? "w-[95%]" : "w-[0%]"} h-[52px] px-2 hover:bg-[#D3D3D3]/60 cursor-pointer flex flex-row items-center gap-x-2 bg-[#828282]/60 border border-[#454545]/60 `} onClick={() => setTab("nozzle")} >
-                                <Cone className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
-                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Nozzle (N)</p>
+                        <input key="customCodeinput" onChange={(e) => setCustomCode(e.target.value)} value={customCode} placeholder="M 423.." className="w-[164px] px-1 h-7 rounded-[5px] placeholder:text-[#c6c6c6] text-[#d3d3d3] border border-[#A9C1D5]"
+                            style={{
+                                background:
+                                    "linear-gradient(to bottom, rgba(116,116,116,0.2) 0%, rgba(128,127,127,0.3) 54%, rgba(170,168,168,0.2) 100%)",
+                                boxShadow: "0px 2px 0px 0 rgba(255,255,255,0.25)",
+                            }}></input>
+                    </>
+                    <button onClick={() => { props.controller(customCode) }} className="w-[30px] h-7 rounded-[5px] border border-[#A9C1D5] shadow-[0_2px_0px_0_rgba(255,255,255,0.25)] hover:shadow-[0px_4px_4px_0_rgba(255,255,255,0.25),0_2px_0px_0_rgba(255,255,255,0.25)]"
+                        style={{
+                            background:
+                                "linear-gradient(to bottom, rgba(116,116,116,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(170,168,168,0.5) 100%)",
 
-                            </div>
-                            <div className="w-[95%] flex flex-row gap-x-2 items-center h-[52px] px-2 hover:bg-[#D3D3D3]/60 cursor-pointer bg-[#828282]/60 border border-[#454545]/60" onClick={() => setTab("base")}>
-                                <Cuboid className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
-                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Base (B)</p>
+                        }}>
+                        <Play className="w-[18px] h-[18px] mx-auto my-auto" />
 
+                    </button>
 
-                            </div>
-                            <div className="w-[95%] flex flex-row gap-x-2 cursor-pointer px-2 hover:bg-[#D3D3D3]/60 items-center  h-[52px] bg-[#828282]/60 border border-[#454545]/60 " onClick={() => setTab("fan")} >
-                                <Fan className="w-6 h-6 my-auto rotate-180  text-[#EFEFEF]" />
-                                <p className="text-[15px] font-medium text-left text-[#e9e9e9]">Fan (F)</p>
-
-
-                            </div>
-                        </div></>
-                    <div className="w-7 my-auto  h-auto">
-
-                        {isPanelVisible ? <LuChevronLeft
-                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
-                        }`}
-                            onClick={togglePanel}
-                        /> : <LuChevronRight
-                            className={`w-5 h-5 my-auto cursor-pointer  text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer"
-                    }`}
-                            onClick={togglePanel}
-                        />}
-
-
-                    </div>
                 </div>
 
             </div>
 
 
-
-
-{/* right */}
-            <div className=" h-auto w-auto absolute top-[15vh] right-[0vw] bg-transparent ">
-                <div className={`flex transition duration-300 ease-in-out flex-row ${isDetailVisible ? "" : "transform translate-x-[92%]"}`} >
-                    <div className="w-[28px] mt-4 -mr-[1px] flex flex-col justify-center h-[40px] rounded-tl-[10px] rounded-bl-[10px] border border-[#A9C1D5] "
-                        style={{
-                            background:
-                                "linear-gradient(to bottom, rgba(68,68,68,0.5) 0%, rgba(128,127,127,0.5) 54%, rgba(78,76,76,0.5) 100%)",
-                        }} onClick={toggleDetail}>
-                        {!isDetailVisible ? <LuChevronLeft className="mx-auto my-auto w-5 h-5 text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer" /> : <LuChevronRight className="mx-auto my-auto w-5 h-5 text-[#c9c9c9] hover:h-6 hover:w-6 cursor-pointer" />}
-
-                    </div>
-                    <div
-                        className={`w-[488px] min-h-[600px] z-10 max-h-screen h-auto rounded-l-[10px] border border-r-0 border-[#A9C1D5] backdrop-blur-md `}
-                        style={{
-                            background:
-                                "linear-gradient(to bottom, rgba(68,68,68,0.3) 0%, rgba(128,127,127,0.2) 44%, rgba(78,76,76,0.3) 50%)",
-                        }}
-                    >
-                        {tab === "nozzle" ? <NozzleTab /> : (tab === "base" ? <BaseTab /> : (tab === "fan" ? <FanTab /> : (tab === "universal" ? <UniversalPanel stata={stata} /> : (tab === "controll" && <><ControllPanel stata={stata} /></>))))}
-
-                    </div>
-
-                </div>
-
-
-            </div>
 
 
         </div>
-    );
+    )
+
 }
-
-
-
-
